@@ -35,7 +35,7 @@ if __name__ == '__main__':
     PRIMES = [i*unit+1 for i in range(10)]
 
     sum = 0
-    with ProcessPoolExecutor(max_workers=4) as executor:
+    with ProcessPoolExecutor(max_workers=2) as executor:
         for number, prime in zip(PRIMES, executor.map(cal_pi1, PRIMES)):
             sum += prime
 

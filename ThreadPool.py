@@ -1,25 +1,26 @@
+import math
 import time
-from concurrent.futures import ThreadPoolExecutor, wait, ALL_COMPLETED
+from concurrent.futures import ProcessPoolExecutor
+unit = 100
+PRIMES = [1,1*unit+1,2*unit+1]
 
-def task(index):
-    time.sleep(1)
-    print('This is %d'%index)
+def cal_pi(start):
+    sum = 0
+    for i in range(start, start+100, 1):
+        sum += 1/(i**2)
+
+    return sum
 
 def main():
-
     t1 = time.time()
-    for index in range(1, 10):
-        task(index)
+    sum = 0
+    with ProcessPoolExecutor() as executor:
+        for number, prime in zip(PRIMES, executor.map(cal_pi, PRIMES)):
+            sum += prime
+
+    print(sum)
     t2 = time.time()
-    print('不使用多线程，总共耗时：%s'%(t2-t1))
+    print(t2-t1)
 
-    print('\n'+'*'*80)
-    t3 = time.time()
-    executor = ThreadPoolExecutor(max_workers=4) # 可以自己调整max_workers
-    # submit()的参数： 第一个为函数， 之后为该函数的传入参数，允许有多个
-    future_tasks = [executor.submit(task, index) for index in range(1, 10)]
-    wait(future_tasks, return_when=ALL_COMPLETED)
-    t4 = time.time()
-    print('使用多线程，总共耗时：%s'%(t4-t3))
-
-main()
+if __name__ == '__main__':
+    main()
